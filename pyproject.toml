@@ -9,6 +9,7 @@ python = "^3.8"
 Flask-RESTful = "^0.3.9"
 binarytree = "^6.5.1"
 Flask = "^2.2.2"
+keyboard = "^0.13.5"
 
 [tool.poetry.dev-dependencies]
 

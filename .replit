@@ -1,5 +1,5 @@
 run = "gunicorn --bind 0.0.0.0:5000 app:app"
-#run = "python3 main.py"
+#run = "python3 run.py"
 
 # The primary language of the repl. There can be others, though!
 language = "python3"
