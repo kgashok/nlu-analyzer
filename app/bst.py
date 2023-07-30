@@ -2,7 +2,9 @@ from binarytree import Node, bst
 
 
 class BST:
-
+    """generate a BST and insert nodes into it.
+    Traversal outputs are generated.
+    """
     def __init__(self, balanced=False, node=None):
         self.balancedbst = False
         if balanced: 
@@ -72,6 +74,7 @@ class BST:
         return output
 
 
+# sample output which gets displayed on local console
 bsttest = BST()
 bsttest.binary_insert(10)
 bsttest.binary_insert(7)
@@ -85,26 +88,28 @@ bsttest.binary_insert(14)
 bsttest.binary_insert(22)
 print(bsttest.root)
 
-bbst = bst(height=3, is_perfect=True)
-print(bbst)
+balancedbst = bst(height=3, is_perfect=True)
+print(balancedbst)
 #print(bbst.inorder)
 #print(type(bbst).__name__)
 
-def sortedArrayToBST(arr):
-	if not arr:
-		return None
 
-	# find middle index
-	mid = len(arr) // 2
+def sortedArrayToBST(arr):
+    '''take a sorted array and return a balanced binary tree out of it'''
+    if not arr:
+        return None
+
+    # find middle index
+    mid = len(arr) // 2
 	
-	# make the middle element the root
-	root = Node(arr[mid])
+    # make the middle element the root
+    root = Node(arr[mid])
 	
-	# left subtree of root has all
-	# values <arr[mid]
-	root.left = sortedArrayToBST(arr[:mid])
+    # left subtree of root has all
+    # values <arr[mid]
+    root.left = sortedArrayToBST(arr[:mid])
 	
-	# right subtree of root has all
-	# values >arr[mid]
-	root.right = sortedArrayToBST(arr[mid+1:])
-	return root
+    # right subtree of root has all
+    # values >arr[mid]
+    root.right = sortedArrayToBST(arr[mid+1:])
+    return root
