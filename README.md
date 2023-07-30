@@ -20,7 +20,7 @@ or
 
 > http://127.0.0.1:5000/?nodes=1,22,-3,4,-1,-11&shuffle=true&range=true
 
-> http://127.0.0.1:5000/?nodes=1,22,-3,4,-1,-11&shuffle=true
+> http://127.0.0.1:5000/?nodes=1,22,-3,4,-1,-11
 
 And ```<Ctrl-R>``` to visualize a different BST. 
 

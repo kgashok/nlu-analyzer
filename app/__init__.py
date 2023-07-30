@@ -28,44 +28,48 @@ class MainResource(Resource):
            and https://flask.palletsprojects.com/en/2.3.x/api/#flask.Response
  
         """        
-        # strip query params
+        # process the query params
+        balanced = None
+        nodes = list()
+        shuffle = "true"
+        range = request.args.get('range')
+        shuffle = request.args.get('shuffle')
         n = request.args.get('nodes')
+            
         if n:
             n = n.strip().split(',')
-            nodes = [int(e) for e in n]
-            # print(nodes, nodes[0], nodes[1])
-            range = request.args.get('range')
-            if range and range.lower() == 'true': 
-                #print(type(nodes[0]))
-                #print(type(nodes[1]))
-                #nodes = list(range(nodes[0], nodes[1]))
-                nodes[:] = biglist 
-                
-            shuffle = request.args.get('shuffle')
-
-            balanced = None
-            if shuffle and shuffle.lower() == 'true':
-                # do you want a https://kov.ai/linearTree?
-                linearTree = random.choice([False, True, False, False, False])
-                if linearTree:
-                    nodes.sort()
-                    balanced = random.choice([False, True]) 
-                else:
-                    random.shuffle(nodes)
-
-            bst = BST(balanced=balanced)        
-            if not balanced: 
-                try:
-                    for n in nodes:
-                        bst.binary_insert(int(n))
-                except:
-                    return 'An error occurred, please double check your input!'
-
-            response = make_response(bst.get_output(), 200)
-            response.mimetype = 'text/plain'
-                
+            try: 
+                nodes = [int(e) for e in n]
+                # print(nodes, nodes[0], nodes[1])
+            except: 
+                response = make_response("An error occurred, please double check your input!", 400)
+                return response
         else:
-            response = 'You must supply a comma delimited list of numbers in a \'nodes\' query param!'
+            print("No node information given. Using standard list!")
+            nodes[:] = biglist 
+                            
+        if shuffle != "false": # and shuffle.lower() == 'true':
+            # do you want a https://kov.ai/linearTree?
+            linearTree = random.choice([False, True, False, False, False])
+            if linearTree:
+                nodes.sort()
+                balanced = random.choice([False, True]) 
+            else:
+                random.shuffle(nodes)
+
+        bst = BST(balanced=balanced)        
+        if not balanced: 
+            try:
+                for n in nodes:
+                    bst.binary_insert(int(n))
+            except:
+                #return 'An error occurred, please double check your input!'
+                response = make_response("Cannot generate BST. Check your input!", 400)
+                return response
+
+        response = make_response(bst.get_output(), 200)
+        response.mimetype = 'text/plain'
+                
         return response
 
 
