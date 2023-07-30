@@ -96,7 +96,7 @@ def sortedArrayToBST(arr):
 		return None
 
 	# find middle index
-	mid = (len(arr)) // 2
+	mid = len(arr) // 2
 	
 	# make the middle element the root
 	root = Node(arr[mid])
