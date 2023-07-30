@@ -1,5 +1,5 @@
 from binarytree import Node, bst
-
+from app.version import getversion
 
 class BST:
     """generate a BST and insert nodes into it.
@@ -12,7 +12,13 @@ class BST:
             self.balancedbst = True
         else:
             self.root = node
+        
+        self.set_banner_info()
 
+    def set_banner_info(self): 
+        versioninfo = getversion()
+        self.banner = str("BST Visualizer - " + versioninfo + "\n") 
+        
     def binary_insert(self, num, node=None):
         if node is None:
             if self.root is None:
@@ -64,9 +70,9 @@ class BST:
         return ans_list
 
     def get_output(self):
-        output = str() 
+        output = self.banner
         if self.balancedbst: 
-            output = 'Balanced BST\n'
+            output += 'Balanced BST\n'
         output += str(self.root)
         output += '\n\nPREORDER\t' + str(self.preorder([]))
         output += '\nINORDER\t\t' + str(self.inorder([]))
