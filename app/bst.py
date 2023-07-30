@@ -17,7 +17,8 @@ class BST:
 
     def set_banner_info(self): 
         versioninfo = getversion()
-        self.banner = str("BST Visualizer - " + versioninfo + "\n") 
+        self.banner = "BST Visualizer - " + versioninfo 
+        self.banner += "  (<Ctrl-R> to generate a new BST)\n"
         
     def binary_insert(self, num, node=None):
         if node is None:
