@@ -8,9 +8,16 @@ import time
 app = Flask(__name__)
 api = Api(app)
 
+# The sample list to be used to generate the BST 
+# in case the user specifies range=true on the URL
 biglist = list(range(1, 30))
 
 class MainResource(Resource):
+    """handles the parsing of the URL for node information
+
+    Args:
+        Resource (_type_): _description_
+    """    
     def get(self):
         # strip query params
         n = request.args.get('nodes')
