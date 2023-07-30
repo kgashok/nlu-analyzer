@@ -1,4 +1,4 @@
-from binarytree import Node, bst as bst2
+from binarytree import Node, bst
 
 
 class BST:
@@ -6,7 +6,7 @@ class BST:
     def __init__(self, balanced=False, node=None):
         self.balancedbst = False
         if balanced: 
-            self.root = bst2(height=4, is_perfect=True)
+            self.root = bst(height=4, is_perfect=True)
             self.balancedbst = True
         else:
             self.root = node
@@ -72,21 +72,20 @@ class BST:
         return output
 
 
-bst = BST()
-bst.binary_insert(10)
-bst.binary_insert(7)
-bst.binary_insert(11)
-bst.binary_insert(6)
-bst.binary_insert(8)
-bst.binary_insert(20)
-bst.binary_insert(1)
-bst.binary_insert(9)
-bst.binary_insert(14)
-bst.binary_insert(22)
+bsttest = BST()
+bsttest.binary_insert(10)
+bsttest.binary_insert(7)
+bsttest.binary_insert(11)
+bsttest.binary_insert(6)
+bsttest.binary_insert(8)
+bsttest.binary_insert(20)
+bsttest.binary_insert(1)
+bsttest.binary_insert(9)
+bsttest.binary_insert(14)
+bsttest.binary_insert(22)
+print(bsttest.root)
 
-print(bst.root)
-
-bbst = bst2(height=3, is_perfect=True)
+bbst = bst(height=3, is_perfect=True)
 print(bbst)
 #print(bbst.inorder)
 #print(type(bbst).__name__)
