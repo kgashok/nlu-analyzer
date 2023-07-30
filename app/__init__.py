@@ -19,6 +19,15 @@ class MainResource(Resource):
         Resource (_type_): _description_
     """    
     def get(self):
+        """parses the URL to build a BST and generate 
+        a string equivalent of the same for display
+
+        Returns:
+           Response: containing the string version of the BST object
+           See https://flask.palletsprojects.com/en/2.3.x/api/#flask.Flask.make_response
+           and https://flask.palletsprojects.com/en/2.3.x/api/#flask.Response
+ 
+        """        
         # strip query params
         n = request.args.get('nodes')
         if n:
