@@ -16,5 +16,9 @@ and improve the output and functionality as a web app.
 
 > https://bst-visualizer.ashokb.repl.co/?nodes=1,22,-3,4,-1,-11&shuffle=true&range=true
 
+or 
+
+> http://127.0.0.1:5000/?nodes=1,22,-3,4,-1,-11&shuffle=true&range=true
+
 And ```<Ctrl-R>``` to visualize a different BST. 
 
