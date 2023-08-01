@@ -95,7 +95,8 @@ class MainResource(Resource):
         try:
             response = service.analyze(
                 return_analyzed_text="true", url=nlu_url,\
-                # clean="false", xpath='//*[@id="description"]', 
+                # clean="false", \
+                xpath='//*[@id="description"]', 
                 features=Features(metadata={}, categories=CategoriesOptions() \
                                 #entities=EntitiesOptions(), \
                                 #keywords=KeywordsOptions() \
