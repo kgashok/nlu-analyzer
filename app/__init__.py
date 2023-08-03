@@ -47,14 +47,15 @@ api = Api(app)
 
 import re
 
-def youtube_get_id(url):
+'''def youtube_get_id(url):
     ID = ''
     patterns = [
         r'(?<=v=)[^&#]+',
         r'(?<=vi/)[^&#]+',
         r'(?<=youtu\.be/)[^&#]+',
         r'(?<=/v/)[^&#]+',
-        r'(?<=/embed/)[^&#]+'
+        r'(?<=/embed/)[^&#]+',
+        r'(?<=youtube.com/shorts/)[^?]+'
     ]
     
     for pattern in patterns:
@@ -64,7 +65,38 @@ def youtube_get_id(url):
             break
 
     return ID
+#'''
+def youtube_get_id(url):
+    ID = ''
+    patterns = [
+        r'(?<=v=|vi/|youtu\.be/|/v/|/embed/)[^/?&]+',
+        r'(?<=youtube.com/shorts/|youtu.be/)[^?&]+'
+    ]
     
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            ID = match.group()
+            break
+
+    return ID
+'''
+#'''
+def youtube_get_id(url):
+    video_id = ''
+    patterns = [
+        r'(?:(?:v|vi|e)/|watch\?v=|youtu\.be/|/v/|/embed/|youtube.com/shorts/)([^/?&]+)',
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            video_id = match.group(1)
+            break
+
+    return video_id
+#'''
+
 class MainResource(Resource):
     """handles the parsing of the URL for node information
 
@@ -73,14 +105,17 @@ class MainResource(Resource):
     """    
     
     def get_url_related(self, url):
-        clean = None
+        clean = "true"
         xpath = None
         adj_url = url.strip()
         if adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
             video_id = youtube_get_id(adj_url)
+            if len(video_id) == 0: 
+                print("Bad Video ID")
+                raise ApiException(code=400, message="Invalid YouTube video ID!")
             adj_url = "https://www.youtube.com/watch/" + video_id
-            xpath = "//div[@id='contents']"
-            xpath = '//*[@id="content-text"]'
+            xpath = "//title"
+            #xpath = '//*[@id="content-text"]'
             clean = "false"
                 
         return clean, xpath, adj_url
@@ -91,11 +126,14 @@ class MainResource(Resource):
         clean_val, xpath_val, nlu_url = self.get_url_related(nlu_url)
         print("adj_url", nlu_url, clean_val, xpath_val)
         response = None
-        
+
+        #xpath_val = "//div[@class='wd_title wd_language_left' or @class='wd_subtitle wd_language_left']"
+        #xpath_val = "//ytd-text-inline-expander[@id='description-inline-expander']"
+
         try:
             response = service.analyze(
                 return_analyzed_text="true", url=nlu_url,\
-                # clean="false", xpath='//*[@id="description"]', 
+                clean=clean_val, xpath=xpath_val, 
                 features=Features(metadata={}, categories=CategoriesOptions() \
                                 #entities=EntitiesOptions(), \
                                 #keywords=KeywordsOptions() \
