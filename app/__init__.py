@@ -97,6 +97,45 @@ def youtube_get_id(url):
     return video_id
 #'''
 
+tweet_text=  '''
+Here’s an analogy: If Moksha (liberation) is the supreme goal of Life, spirituality is the means to achieve it. Similarly if Polymorphism is the supreme goal of OOD/OOP, abstraction is the means to achieve it.
+
+A good object-oriented design (OOD) provides for effective abstraction (a concept enabled by encapsulation, inheritance, composition, aggregation, association) that enables powerful types of polymorphism (behaviour).
+'''
+
+
+import tweepy
+# Set your Twitter API credentials
+consumer_key = 'KSDtr4QaOsTbA1xdM7rGNgTh4'
+consumer_secret = 'YiH1tQ2gisKD6dlpBwrHmcL3Budub7rXuLXI8niohwJewtbSZP'
+access_token = '59133-ERQI96hcsVh3jcDjLpqdU3oKKMSAY0ZWFDcF3mxEOBQU'
+access_token_secret = 'V8Y1GQb7kQi2io2uyzObSKYcjImGjUVqxNWmTzhuScjn9'
+
+# Authenticate with the Twitter API
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+
+# Create the Tweepy API object
+tweetapi = tweepy.API(auth, wait_on_rate_limit=True)
+
+# Sample tweet URL
+tweet_url = "https://twitter.com/example/status/123456789"
+    
+def get_tweet_text(tweet_url, api):
+
+    # Extract tweet ID from the URL
+    tweet_id = tweet_url.split("/")[-1]
+    
+    # Retrieve the tweet
+    try:
+        tweet = api.get_status(tweet_id, tweet_mode="extended")
+        tweet_text = tweet.full_text
+        print("Extracted Tweet Text:", tweet_text)
+        return tweet_text
+    except tweepy.TweepError as e:
+        print("Error fetching tweet:", e)
+        return None
+
 class MainResource(Resource):
     """handles the parsing of the URL for node information
 
@@ -105,54 +144,95 @@ class MainResource(Resource):
     """    
     
     def get_url_related(self, url):
+        url_type = None
         clean = "true"
         xpath = None
         adj_url = url.strip()
-        if adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
+        #if adj_url.find("twitter.com") > 0: 
+        if adj_url.find("X.com") > 0: 
+            #xpath = "//div[@id='react-root']"
+            #xpath = "//*[@data-testid='tweetText']" 
+            # xpath = "//div[@data-testid]"
+            xpath = "//div[@id='react-root']"
+            xpath = "//article"
+            clean = "false"
+            url_type = "twitter"
+            xpath = get_tweet_text(adj_url, tweetapi)
+            
+        
+        elif adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
             video_id = youtube_get_id(adj_url)
             if len(video_id) == 0: 
                 print("Bad Video ID")
                 raise ApiException(code=400, message="Invalid YouTube video ID!")
             adj_url = "https://www.youtube.com/watch/" + video_id
             xpath = "//title"
+            #xpath = "h3/a"
             #xpath = '//*[@id="content-text"]'
             clean = "false"
                 
-        return clean, xpath, adj_url
+        return url_type, clean, xpath, adj_url
 
     def get(self):
         nlu_url = request.args.get('url')
         print("nlu_url", nlu_url)
-        clean_val, xpath_val, nlu_url = self.get_url_related(nlu_url)
+        url_type, clean_val, xpath_val, nlu_url = self.get_url_related(nlu_url)
         print("adj_url", nlu_url, clean_val, xpath_val)
         response = None
 
         #xpath_val = "//div[@class='wd_title wd_language_left' or @class='wd_subtitle wd_language_left']"
         #xpath_val = "//ytd-text-inline-expander[@id='description-inline-expander']"
 
-        try:
-            response = service.analyze(
-                return_analyzed_text="true", url=nlu_url,\
-                clean=clean_val, xpath=xpath_val, 
-                features=Features(metadata={}, categories=CategoriesOptions() \
-                                #entities=EntitiesOptions(), \
-                                #keywords=KeywordsOptions() \
-                                )).get_result()
-            '''response = service.analyze(
-                url=nlu_url,
-                features=Features(categories=CategoriesOptions(), \
-                                #entities=EntitiesOptions(), \
-                                #keywords=KeywordsOptions() \
-                                )).get_result()
-            '''
-            print("***nlu success!")
-            
-        except ApiException as error:
-            print(error)
-            response = make_response(error.message, error.code)
-            return response 
-            # return error.http_response
-            
+        if url_type == "twitter": 
+            tweet_text = xpath
+            try:
+                response = service.analyze(
+                    text=tweet_text, \
+                    return_analyzed_text="true",\
+                    clean=clean_val, \
+                    features=Features(
+                        metadata={}, \
+                        #summarization=SummarizationOptions(), \
+                        categories=CategoriesOptions() \
+                                    #entities=EntitiesOptions(), \
+                                    #keywords=KeywordsOptions() \
+                                    )).get_result()
+                print("***nlu tweet success!")
+                
+            except ApiException as error:
+                print(error)
+                response = make_response(error.message, error.code)
+                return response 
+                # return error.http_response
+    
+        else:
+            try:
+                response = service.analyze(
+                    #text=tweet_text, \
+                    return_analyzed_text="true", url=nlu_url,\
+                    clean=clean_val, xpath=xpath_val, 
+                    features=Features(
+                        metadata={}, \
+                        #summarization=SummarizationOptions(), \
+                        categories=CategoriesOptions() \
+                                    #entities=EntitiesOptions(), \
+                                    #keywords=KeywordsOptions() \
+                                    )).get_result()
+                '''response = service.analyze(
+                    url=nlu_url,
+                    features=Features(categories=CategoriesOptions(), \
+                                    #entities=EntitiesOptions(), \
+                                    #keywords=KeywordsOptions() \
+                                    )).get_result()
+                '''
+                print("***nlu success!")
+                
+            except ApiException as error:
+                print(error)
+                response = make_response(error.message, error.code)
+                return response 
+                # return error.http_response
+    
         if response: 
             # print(json.dumps(response, indent=2))
             ret_url = response['retrieved_url']
