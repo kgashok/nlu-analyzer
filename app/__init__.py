@@ -136,6 +136,9 @@ def get_tweet_text(tweet_url, api):
         return tweet_text
     except tweepy.TweepyException as e:
         print("Error fetching tweet:", e)
+        # Return a default response when tweet access is forbidden
+        if "453" in str(e):
+            return "Unable to fetch tweet due to API access restrictions."
         return None
 
 class MainResource(Resource):
