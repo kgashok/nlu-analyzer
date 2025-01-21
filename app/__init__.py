@@ -113,25 +113,35 @@ consumer_secret = os.getenv('TWITTER_CONSUMER_SECRET')
 access_token = os.getenv('TWITTER_ACCESS_TOKEN')
 access_token_secret = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
 
+twitter_bearer_token = os.getenv('TWITTER_BEARER_TOKEN')
+
+client = tweepy.Client(bearer_token=twitter_bearer_token)  
+
 # Authenticate with the Twitter API
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
+#auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+#auth.set_access_token(access_token, access_token_secret)
 
 # Create the Tweepy API object
-tweetapi = tweepy.API(auth, wait_on_rate_limit=True)
+#tweetapi = tweepy.API(auth, wait_on_rate_limit=True)
 
 # Sample tweet URL
 #tweet_url = "https://twitter.com/example/status/123456789"
     
-def get_tweet_text(tweet_url, api):
+def get_tweet_text(tweet_url, api= None):
 
     # Extract tweet ID from the URL
     tweet_id = tweet_url.split("/")[-1]
     print("tweet_id", tweet_id)
     # Retrieve the tweet
     try:
-        tweet = api.get_status(tweet_id, tweet_mode="extended")
-        tweet_text = tweet.full_text
+        #tweet = api.get_status(tweet_id, tweet_mode="extended")
+        tweet = client.get_tweet(
+            id=tweet_id,
+            expansions=['author_id', 'attachments.media_keys'],  
+            tweet_fields=['created_at', 'text', 'public_metrics']
+        )
+
+        tweet_text = tweet.data.text
         print("Extracted Tweet Text:", tweet_text)
         return tweet_text
     except tweepy.TweepyException as e:
@@ -160,10 +170,10 @@ class MainResource(Resource):
             # xpath = "//div[@data-testid]"
             xpath = "//div[@id='react-root']"
             xpath = "//article"
-            clean = "false"
+            #clean = "false"
             url_type = "twitter"
-            xpath = get_tweet_text(adj_url, tweetapi)
-            #print("xpath:", xpath)
+            #xpath = get_tweet_text(adj_url, tweetapi)
+            xpath = get_tweet_text(adj_url)           #print("xpath:", xpath)
             
         
         elif adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
@@ -185,28 +195,37 @@ class MainResource(Resource):
         url_type, clean_val, xpath_val, nlu_url = self.get_url_related(nlu_url)
         print("adj_url", nlu_url, clean_val, xpath_val)
         response = None
+        tweet_text = ""
 
         #xpath_val = "//div[@class='wd_title wd_language_left' or @class='wd_subtitle wd_language_left']"
         #xpath_val = "//ytd-text-inline-expander[@id='description-inline-expander']"
 
         if url_type == "twitter": 
-            tweet_text = xpath_val
+            #if len(xpath_val): 
+            tweet_text = xpath_val 
+            #print("tweet_text", tweet_text)
             try:
                 response = service.analyze(
                     text=tweet_text, \
                     return_analyzed_text="true",\
                     clean=clean_val, \
                     features=Features(
-                        metadata={}, \
+                        #metadata={}, \
                         #summarization=SummarizationOptions(), \
                         categories=CategoriesOptions() \
                                     #entities=EntitiesOptions(), \
                                     #keywords=KeywordsOptions() \
                                     )).get_result()
+                #print("analyzed", response)
                 print("***nlu tweet success!")
-                
+
+                response['retrieved_url'] = nlu_url
+                response['metadata'] = dict()
+                response['metadata']['title'] = tweet_text
+                return response
+
             except ApiException as error:
-                print(error)
+                print("APIException1", error)
                 response = make_response(error.message, error.code)
                 return response 
                 # return error.http_response
@@ -234,7 +253,7 @@ class MainResource(Resource):
                 print("***nlu success!")
                 
             except ApiException as error:
-                print(error)
+                print("APIException2", error)
                 response = make_response(error.message, error.code)
                 return response 
                 # return error.http_response
