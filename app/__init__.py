@@ -57,7 +57,7 @@ import re
         r'(?<=/embed/)[^&#]+',
         r'(?<=youtube.com/shorts/)[^?]+'
     ]
-    
+
     for pattern in patterns:
         match = re.search(pattern, url)
         if match:
@@ -72,7 +72,7 @@ def youtube_get_id(url):
         r'(?<=v=|vi/|youtu\.be/|/v/|/embed/)[^/?&]+',
         r'(?<=youtube.com/shorts/|youtu.be/)[^?&]+'
     ]
-    
+
     for pattern in patterns:
         match = re.search(pattern, url)
         if match:
@@ -122,7 +122,7 @@ tweetapi = tweepy.API(auth, wait_on_rate_limit=True)
 
 # Sample tweet URL
 #tweet_url = "https://twitter.com/example/status/123456789"
-    
+
 def get_tweet_text(tweet_url, api):
 
     # Extract tweet ID from the URL
@@ -144,7 +144,7 @@ class MainResource(Resource):
     Args:
         Resource (_type_): _description_
     """    
-    
+
     def get_url_related(self, url):
         url_type = None
         clean = "true"
@@ -161,8 +161,8 @@ class MainResource(Resource):
             url_type = "twitter"
             xpath = get_tweet_text(adj_url, tweetapi)
             #print("xpath:", xpath)
-            
-        
+
+
         elif adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
             video_id = youtube_get_id(adj_url)
             if len(video_id) == 0: 
@@ -173,7 +173,7 @@ class MainResource(Resource):
             #xpath = "h3/a"
             #xpath = '//*[@id="content-text"]'
             clean = "false"
-                
+
         return url_type, clean, xpath, adj_url
 
     def get(self):
@@ -187,27 +187,21 @@ class MainResource(Resource):
         #xpath_val = "//ytd-text-inline-expander[@id='description-inline-expander']"
 
         if url_type == "twitter": 
-            tweet_text = xpath_val
-            try:
-                response = service.analyze(
-                    text=tweet_text, \
-                    return_analyzed_text="true",\
-                    clean=clean_val, \
-                    features=Features(
-                        metadata={}, \
-                        #summarization=SummarizationOptions(), \
-                        categories=CategoriesOptions() \
-                                    #entities=EntitiesOptions(), \
-                                    #keywords=KeywordsOptions() \
-                                    )).get_result()
-                print("***nlu tweet success!")
-                
-            except ApiException as error:
-                print(error)
-                response = make_response(error.message, error.code)
-                return response 
-                # return error.http_response
-    
+            if xpath_val:
+                tweet_text = xpath_val
+                try:
+                    response = service.analyze(
+                        text=tweet_text, \
+                        return_analyzed_text="true",\
+                        clean=clean_val, \
+                        features=Features(
+                            metadata={}, \
+                            categories=CategoriesOptions() \
+                                        )).get_result()
+                    print("***nlu tweet success!")
+            else:
+                return make_response("Unable to analyze tweet due to API limitations", 400)
+
         else:
             try:
                 response = service.analyze(
@@ -216,10 +210,7 @@ class MainResource(Resource):
                     clean=clean_val, xpath=xpath_val, 
                     features=Features(
                         metadata={}, \
-                        #summarization=SummarizationOptions(), \
                         categories=CategoriesOptions() \
-                                    #entities=EntitiesOptions(), \
-                                    #keywords=KeywordsOptions() \
                                     )).get_result()
                 '''response = service.analyze(
                     url=nlu_url,
@@ -229,13 +220,13 @@ class MainResource(Resource):
                                     )).get_result()
                 '''
                 print("***nlu success!")
-                
+
             except ApiException as error:
                 print(error)
                 response = make_response(error.message, error.code)
                 return response 
                 # return error.http_response
-    
+
         if response: 
             # print(json.dumps(response, indent=2))
             ret_url = response['retrieved_url']
@@ -254,9 +245,9 @@ class MainResource(Resource):
                 print("title from soup", title2)
                 if len(title2) > len(title):
                     response['metadata']["title"] = title2 
-        
+
         return response
-    
+
 
 api.add_resource(MainResource, '/analyze')
 
@@ -264,6 +255,3 @@ api.add_resource(MainResource, '/analyze')
 if __name__ == '__main__':
     random.seed(time)
     app.run()
-
-
-
