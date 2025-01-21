@@ -119,20 +119,20 @@ auth.set_access_token(access_token, access_token_secret)
 tweetapi = tweepy.API(auth, wait_on_rate_limit=True)
 
 # Sample tweet URL
-tweet_url = "https://twitter.com/example/status/123456789"
+#tweet_url = "https://twitter.com/example/status/123456789"
     
 def get_tweet_text(tweet_url, api):
 
     # Extract tweet ID from the URL
     tweet_id = tweet_url.split("/")[-1]
-    
+    print("tweet_id", tweet_id)
     # Retrieve the tweet
     try:
         tweet = api.get_status(tweet_id, tweet_mode="extended")
         tweet_text = tweet.full_text
         print("Extracted Tweet Text:", tweet_text)
         return tweet_text
-    except tweepy.TweepyExceptionError as e:
+    except tweepy.TweepyException as e:
         print("Error fetching tweet:", e)
         return None
 
@@ -185,7 +185,7 @@ class MainResource(Resource):
         #xpath_val = "//ytd-text-inline-expander[@id='description-inline-expander']"
 
         if url_type == "twitter": 
-            tweet_text = xpath
+            tweet_text = xpath_val
             try:
                 response = service.analyze(
                     text=tweet_text, \
