@@ -132,7 +132,7 @@ def get_tweet_text(tweet_url, api):
         tweet_text = tweet.full_text
         print("Extracted Tweet Text:", tweet_text)
         return tweet_text
-    except tweepy.TweepError as e:
+    except tweepy.TweepyExceptionError as e:
         print("Error fetching tweet:", e)
         return None
 
@@ -149,7 +149,7 @@ class MainResource(Resource):
         xpath = None
         adj_url = url.strip()
         #if adj_url.find("twitter.com") > 0: 
-        if adj_url.find("X.com") > 0: 
+        if adj_url.find("x.com") > 0: 
             #xpath = "//div[@id='react-root']"
             #xpath = "//*[@data-testid='tweetText']" 
             # xpath = "//div[@data-testid]"
@@ -158,6 +158,7 @@ class MainResource(Resource):
             clean = "false"
             url_type = "twitter"
             xpath = get_tweet_text(adj_url, tweetapi)
+            #print("xpath:", xpath)
             
         
         elif adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
