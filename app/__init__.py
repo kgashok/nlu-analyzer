@@ -105,11 +105,13 @@ A good object-oriented design (OOD) provides for effective abstraction (a concep
 
 
 import tweepy
-# Set your Twitter API credentials
-consumer_key = 'KSDtr4QaOsTbA1xdM7rGNgTh4'
-consumer_secret = 'YiH1tQ2gisKD6dlpBwrHmcL3Budub7rXuLXI8niohwJewtbSZP'
-access_token = '59133-ERQI96hcsVh3jcDjLpqdU3oKKMSAY0ZWFDcF3mxEOBQU'
-access_token_secret = 'V8Y1GQb7kQi2io2uyzObSKYcjImGjUVqxNWmTzhuScjn9'
+import os
+
+# Use your existing Twitter API credentials
+consumer_key = os.getenv('TWITTER_CONSUMER_KEY')
+consumer_secret = os.getenv('TWITTER_CONSUMER_SECRET')
+access_token = os.getenv('TWITTER_ACCESS_TOKEN')
+access_token_secret = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
 
 # Authenticate with the Twitter API
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
