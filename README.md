@@ -6,6 +6,8 @@ Change the URL below (```until /analyze?```) to whatever dev link shows in the W
 
 - Non Twitter example https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://bit.ly/4jmHZsz
 
+- Tough one https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://x.com/tomaspueyo/status/1774823770638749914?s=20
+
 
 # Move from Heroku to Replit
 

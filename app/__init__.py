@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup as bs
 
 from ibm_watson import NaturalLanguageUnderstandingV1, ApiException
 #from ibm_watson.natural_language_understanding_v1 import Features, EntitiesOptions, KeywordsOptions, CategoriesOptions, 
-from ibm_watson.natural_language_understanding_v1 import Features, CategoriesOptions, SummarizationOptions
+from ibm_watson.natural_language_understanding_v1 import Features, CategoriesOptions, KeywordsOptions, SummarizationOptions
 #from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 # Authentication via IAM
@@ -131,6 +131,8 @@ def get_tweet_text(tweet_url, api= None):
 
     # Extract tweet ID from the URL
     tweet_id = tweet_url.split("/")[-1]
+    if tweet_id.find('?') != -1: 
+        tweet_id = tweet_id.split('?')[0]
     print("tweet_id", tweet_id)
     # Retrieve the tweet
     try:
@@ -212,10 +214,10 @@ class MainResource(Resource):
                     features=Features(
                         #metadata={}, \
                         #summarization=SummarizationOptions(), \
-                        categories=CategoriesOptions() \
-                                    #entities=EntitiesOptions(), \
-                                    #keywords=KeywordsOptions() \
-                                    )).get_result()
+                        categories=CategoriesOptions(), \
+                        keywords=KeywordsOptions(emotion=True, sentiment=True, limit=2) \
+                        )).get_result()
+
                 #print("analyzed", response)
                 print("***nlu tweet success!")
 
