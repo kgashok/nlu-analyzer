@@ -278,6 +278,7 @@ class MainResource(Resource):
                 print("title from soup", title2)
                 if len(title2) > len(title):
                     response['metadata']["title"] = title2 
+                    print("soup title used!")
         
         return response
     
