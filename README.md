@@ -2,6 +2,7 @@
 # Test links for output analysis 
 
 Change the URL below (```until /analyze?```) to whatever dev link shows in the Webview
+- YouTube link https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://www.youtube.com/watch?v=ygMeQUQ-VVY 
 - Twitter example https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://x.com/Ravisutanjani/status/1881038175851913356
 
 - Non Twitter example https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://bit.ly/4jmHZsz

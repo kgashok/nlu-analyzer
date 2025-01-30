@@ -276,7 +276,9 @@ class MainResource(Resource):
 
                 response['retrieved_url'] = nlu_url
                 response['metadata'] = dict()
-                response['metadata']['title'] = tweet_text
+                if url_type == "youtube": 
+                    content_text = content_text.split("\n\n", 1)[0]   
+                response['metadata']['title'] = content_text
                 return response
 
             except ApiException as error:
