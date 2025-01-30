@@ -127,12 +127,20 @@ client = tweepy.Client(bearer_token=twitter_bearer_token)
 # Sample tweet URL
 #tweet_url = "https://twitter.com/example/status/123456789"
     
-def get_tweet_text(tweet_url, api= None):
-
+def get_tweet_text(tweet_url, api=None):
+    """Extract text content from a tweet URL.
+    
+    Args:
+        tweet_url (str): URL of the tweet to extract text from
+        api: Twitter API client instance (optional)
+        
+    Returns:
+        str: The text content of the tweet, or None if unable to fetch
+    """
     # Extract tweet ID from the URL
     tweet_id = tweet_url.split("/")[-1]
-    if tweet_id.find('?') != -1: 
-        tweet_id = tweet_id.split('?')[0]
+    if tweet_id.find('?') != -1:
+        tweet_id = tweet_id.split('?')[0] 
     print("tweet_id", tweet_id)
     # Retrieve the tweet
     try:
@@ -154,13 +162,29 @@ def get_tweet_text(tweet_url, api= None):
         return None
 
 class MainResource(Resource):
-    """handles the parsing of the URL for node information
+    """Handles URL parsing and analysis for natural language processing.
+    
+    This resource class processes URLs to extract text content and performs
+    natural language analysis using IBM Watson services. It handles different
+    types of URLs including Twitter/X posts and YouTube videos.
 
-    Args:
-        Resource (_type_): _description_
+    Inherits from:
+        Resource: Flask-RESTful base resource class
     """    
     
     def get_url_related(self, url):
+        """Process URL and determine its type and extraction parameters.
+        
+        Args:
+            url (str): The URL to analyze
+            
+        Returns:
+            tuple: Contains:
+                - url_type (str): Type of URL (twitter, youtube, etc.)
+                - clean (str): Cleaning flag for text processing
+                - xpath (str): XPath for content extraction
+                - adj_url (str): Adjusted/processed URL
+        """
         url_type = None
         clean = "true"
         xpath = None
@@ -192,6 +216,16 @@ class MainResource(Resource):
         return url_type, clean, xpath, adj_url
 
     def get(self):
+        """Handle GET requests for URL analysis.
+        
+        Processes the provided URL parameter to extract and analyze text content
+        using IBM Watson Natural Language Understanding service.
+        
+        Returns:
+            dict: Analysis results from Watson NLU service
+            or
+            Response: Error response if processing fails
+        """
         nlu_url = request.args.get('url')
         print("nlu_url", nlu_url)
         url_type, clean_val, xpath_val, nlu_url = self.get_url_related(nlu_url)
