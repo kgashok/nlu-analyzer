@@ -203,15 +203,38 @@ class MainResource(Resource):
             
         
         elif adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
+            from googleapiclient.discovery import build
+            from googleapiclient.errors import HttpError
+            import os
+
             video_id = youtube_get_id(adj_url)
-            if len(video_id) == 0: 
-                print("Bad Video ID")
+            if len(video_id) == 0:
+                print("Bad Video ID") 
                 raise ApiException(code=400, message="Invalid YouTube video ID!")
-            adj_url = "https://www.youtube.com/watch/" + video_id
-            xpath = "//title"
-            #xpath = "h3/a"
-            #xpath = '//*[@id="content-text"]'
-            clean = "false"
+
+            youtube = build('youtube', 'v3', developerKey=os.getenv('YOUTUBE_API_KEY'))
+            
+            try:
+                video_response = youtube.videos().list(
+                    part='snippet',
+                    id=video_id
+                ).execute()
+
+                if not video_response['items']:
+                    raise ApiException(code=404, message="Video not found!")
+
+                video_data = video_response['items'][0]['snippet']
+                title = video_data.get('title', '')
+                description = video_data.get('description', '')
+                
+                # Store combined text in xpath for later use
+                xpath = f"{title}\n\n{description}"
+                url_type = "youtube"
+                clean = "true"
+                adj_url = f"https://www.youtube.com/watch?v={video_id}"
+            except HttpError as e:
+                print(f"YouTube API error: {e}")
+                raise ApiException(code=500, message="YouTube API error")
                 
         return url_type, clean, xpath, adj_url
 
@@ -236,18 +259,14 @@ class MainResource(Resource):
         #xpath_val = "//div[@class='wd_title wd_language_left' or @class='wd_subtitle wd_language_left']"
         #xpath_val = "//ytd-text-inline-expander[@id='description-inline-expander']"
 
-        if url_type == "twitter": 
-            #if len(xpath_val): 
-            tweet_text = xpath_val 
-            #print("tweet_text", tweet_text)
+        if url_type in ["twitter", "youtube"]:
+            content_text = xpath_val
             try:
                 response = service.analyze(
-                    text=tweet_text, \
+                    text=content_text, \
                     return_analyzed_text="true",\
                     clean=clean_val, \
                     features=Features(
-                        #metadata={}, \
-                        #summarization=SummarizationOptions(), \
                         categories=CategoriesOptions(), \
                         keywords=KeywordsOptions(emotion=True, sentiment=True, limit=2) \
                         )).get_result()
