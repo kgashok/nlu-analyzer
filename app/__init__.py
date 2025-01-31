@@ -64,8 +64,12 @@ def get_tweet_text(tweet_url, api=None):
         print("Extracted Tweet Text:", tweet_text)
         return tweet_text
 
-                tweet_text = f"Twitter User: {user_name} (@{user_username})"
-                if user_description:
+                return tweet_text
+    except tweepy.TweepyException as e:
+        print("Error fetching tweet:", e)
+        if "453" in str(e):
+            return "Unable to fetch tweet due to API access restrictions."
+        return None
                     tweet_text += f"\nDescription: {user_description}"
                 print("Extracted User Info:", tweet_text)
                 return tweet_text
