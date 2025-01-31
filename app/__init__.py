@@ -138,28 +138,38 @@ def get_tweet_text(tweet_url, api=None):
         str: The text content of the tweet, or None if unable to fetch
     """
     # Extract tweet ID from the URL
+    tweet_user = None
     tweet_id = tweet_url.split("/")[-1]
     if tweet_id.find('?') != -1:
         tweet_id = tweet_id.split('?')[0] 
-    print("tweet_id", tweet_id)
-    # Retrieve the tweet
-    try:
-        #tweet = api.get_status(tweet_id, tweet_mode="extended")
-        tweet = client.get_tweet(
-            id=tweet_id,
-            expansions=['author_id', 'attachments.media_keys'],  
-            tweet_fields=['created_at', 'text', 'public_metrics']
-        )
-
-        tweet_text = tweet.data.text
-        print("Extracted Tweet Text:", tweet_text)
-        return tweet_text
-    except tweepy.TweepyException as e:
-        print("Error fetching tweet:", e)
-        # Return a default response when tweet access is forbidden
-        if "453" in str(e):
-            return "Unable to fetch tweet due to API access restrictions."
-        return None
+        print("tweet_id", tweet_id)
+    else:
+        # handle tweet user handle 
+        tweet_user = tweet_id
+        
+    if tweet_user: 
+        print('Not implemented yet')
+        
+    else:
+        # Retrieve the tweet
+        try:
+            #tweet = api.get_status(tweet_id, tweet_mode="extended")
+            tweet = client.get_tweet(
+                id=tweet_id,
+                expansions=['author_id', 'attachments.media_keys'],  
+                tweet_fields=['created_at', 'text', 'public_metrics']
+            )
+    
+            tweet_text = tweet.data.text
+            print("Extracted Tweet Text:", tweet_text)
+            return tweet_text
+        except tweepy.TweepyException as e:
+            print("Error fetching tweet:", e)
+            # Return a default response when tweet access is forbidden
+            if "453" in str(e):
+                return "Unable to fetch tweet due to API access restrictions."
+            return None
+    
 
 class MainResource(Resource):
     """Handles URL parsing and analysis for natural language processing.
