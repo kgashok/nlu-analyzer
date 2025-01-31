@@ -3,6 +3,7 @@
 
 Some kind of automated tests can be generated using the below links. As a sanity check. Change the URL below (```until /analyze?```) to whatever dev link shows in the Webview
 
+- Unsupported language - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://youtu.be/q2u6Hr52Lno?si=5PY7BuyJEB4qTyMi 
 - Another Twitter example https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://x.com/ShoorveerLive/status/1804108149236076557
 
 - X.com profile https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://x.com/lifeskills_in 
