@@ -149,12 +149,13 @@ def get_tweet_text(tweet_url, api=None):
         
     if tweet_user:
         try:
-            user = client.get_user(username=tweet_user)
+            user = client.get_user(username=tweet_user, user_fields=['description', 'name', 'username'])
             if user.data:
                 user_data = user.data
-                user_description = getattr(user_data, 'description', '')
-                user_name = getattr(user_data, 'name', '')
-                user_username = getattr(user_data, 'username', '')
+                print("Full user data:", user_data)
+                user_description = user_data.description
+                user_name = user_data.name
+                user_username = user_data.username
                 
                 # Combine user information into text
                 tweet_text = f"Twitter User: {user_name} (@{user_username})"
