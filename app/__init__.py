@@ -147,8 +147,23 @@ def get_tweet_text(tweet_url, api=None):
         # handle tweet user handle 
         tweet_user = tweet_id
         
-    if tweet_user: 
-        print('Not implemented yet')
+    if tweet_user:
+        try:
+            user = client.get_user(username=tweet_user)
+            if user.data:
+                user_data = user.data
+                user_description = user_data.description if hasattr(user_data, 'description') else ''
+                user_name = user_data.name if hasattr(user_data, 'name') else ''
+                user_username = user_data.username if hasattr(user_data, 'username') else ''
+                
+                # Combine user information into text
+                tweet_text = f"Twitter User: {user_name} (@{user_username})\nBio: {user_description}"
+                print("Extracted User Info:", tweet_text)
+                return tweet_text
+            return "User not found"
+        except Exception as e:
+            print("Error fetching user:", e)
+            return f"Error fetching user information: {str(e)}"
         
     else:
         # Retrieve the tweet
