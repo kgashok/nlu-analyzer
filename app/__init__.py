@@ -49,11 +49,37 @@ def get_tweet_text(tweet_url, api=None):
     Returns:
         str: The text content of the tweet, or None if unable to fetch
     """
-    # Extract tweet ID from URL
+    tweet_user = None
     tweet_id = tweet_url.split("/")[-1]
-    if tweet_id.find('?') != -1:
+    print("tweet_id", tweet_id)
+
+    if tweet_id.find('?') == -1 and not tweet_id.isnumeric():
+        tweet_user = tweet_id
+        print("tweet_user", tweet_user)
+    else: 
         tweet_id = tweet_id.split('?')[0]
-        
+        print("tweet_id", tweet_id)
+    
+    if tweet_user:
+        try:
+            user = client.get_user(username=tweet_user, user_fields=['description', 'name', 'username'])
+            if user.data:
+                user_data = user.data
+                print("Full user data:", user_data)
+                user_description = user_data.description
+                user_name = user_data.name
+                user_username = user_data.username
+
+                tweet_text = f"Twitter User: {user_name} (@{user_username})"
+                if user_description:
+                    tweet_text += f"\nDescription: {user_description}"
+                print("Extracted User Info:", tweet_text)
+                return tweet_text
+            return "User not found"
+        except Exception as e:
+            print("Error fetching user:", e)
+            return f"Error fetching user information: {str(e)}"
+            
     try:
         tweet = client.get_tweet(
             id=tweet_id,
@@ -63,35 +89,11 @@ def get_tweet_text(tweet_url, api=None):
         tweet_text = tweet.data.text
         print("Extracted Tweet Text:", tweet_text)
         return tweet_text
-
-                return tweet_text
     except tweepy.TweepyException as e:
         print("Error fetching tweet:", e)
         if "453" in str(e):
             return "Unable to fetch tweet due to API access restrictions."
         return None
-                    tweet_text += f"\nDescription: {user_description}"
-                print("Extracted User Info:", tweet_text)
-                return tweet_text
-            return "User not found"
-        except Exception as e:
-            print("Error fetching user:", e)
-            return f"Error fetching user information: {str(e)}"
-    else:
-        try:
-            tweet = client.get_tweet(
-                id=tweet_id,
-                expansions=['author_id', 'attachments.media_keys'],
-                tweet_fields=['created_at', 'text', 'public_metrics']
-            )
-            tweet_text = tweet.data.text
-            print("Extracted Tweet Text:", tweet_text)
-            return tweet_text
-        except tweepy.TweepyException as e:
-            print("Error fetching tweet:", e)
-            if "453" in str(e):
-                return "Unable to fetch tweet due to API access restrictions."
-            return None
 
 class MainResource(Resource):
     """Handles URL parsing and analysis for natural language processing."""
