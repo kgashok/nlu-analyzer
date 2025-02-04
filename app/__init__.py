@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify, make_response
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
@@ -9,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.api_exception import ApiException
-from ibm_watson.natural_language_understanding_v1 import Features, CategoriesOptions, KeywordsOptions, SummarizationOptions
+from ibm_watson.natural_language_understanding_v1 import Features, CategoriesOptions, KeywordsOptions, SummarizationOptions, MetadataOptions # Added MetadataOptions import
 import tweepy
 import os
 import re
@@ -60,7 +59,7 @@ def get_tweet_text(tweet_url, api=None):
     else: 
         tweet_id = tweet_id.split('?')[0]
         print("tweet_id", tweet_id)
-    
+
     if tweet_user:
         try:
             user = client.get_user(username=tweet_user, user_fields=['description', 'name', 'username'])
@@ -80,7 +79,7 @@ def get_tweet_text(tweet_url, api=None):
         except Exception as e:
             print("Error fetching user:", e)
             return f"Error fetching user information: {str(e)}"
-            
+
     try:
         tweet = client.get_tweet(
             id=tweet_id,
@@ -187,7 +186,7 @@ class MainResource(Resource):
                         clean=clean_val,
                         xpath=xpath_val,
                         features=Features(
-                            metadata={},
+                            metadata=MetadataOptions(), # Modified line
                             categories=CategoriesOptions()
                         )).get_result()
                 except ApiException:
