@@ -3,7 +3,6 @@
 
 Some kind of automated tests can be generated using the below links. As a sanity check. Change the URL below (```until /analyze?```) to whatever dev link shows in the Webview
 
-- Behind a paywall - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://www.washingtonpost.com/climate-environment/2025/02/03/microplastics-human-brain-increase 
 - Unsupported language - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://youtu.be/q2u6Hr52Lno?si=5PY7BuyJEB4qTyMi
 - Unsupported language Tamil - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://www.youtube.com/watch?v=3P1XsQjoJOc&si=_vSwYxKCoKPgrwwc 
 - Another Twitter example https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://x.com/ShoorveerLive/status/1804108149236076557

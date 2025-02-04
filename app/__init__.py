@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify, make_response
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
@@ -59,7 +60,7 @@ def get_tweet_text(tweet_url, api=None):
     else: 
         tweet_id = tweet_id.split('?')[0]
         print("tweet_id", tweet_id)
-
+    
     if tweet_user:
         try:
             user = client.get_user(username=tweet_user, user_fields=['description', 'name', 'username'])
@@ -79,7 +80,7 @@ def get_tweet_text(tweet_url, api=None):
         except Exception as e:
             print("Error fetching user:", e)
             return f"Error fetching user information: {str(e)}"
-
+            
     try:
         tweet = client.get_tweet(
             id=tweet_id,
@@ -178,26 +179,15 @@ class MainResource(Resource):
                 return response
         else:
             try:
-                # If URL is not accessible, try analyzing as direct text
-                try:
-                    response = service.analyze(
-                        return_analyzed_text="true",
-                        url=nlu_url,
-                        clean=clean_val,
-                        xpath=xpath_val,
-                        features=Features(
-                            metadata=MetadataOptions(), # Modified line
-                            categories=CategoriesOptions()
-                        )).get_result()
-                except ApiException:
-                    # Try analyzing as text if URL fails
-                    response = service.analyze(
-                        text=nlu_url,  # Treat input as text
-                        return_analyzed_text="true",
-                        features=Features(
-                            metadata={},
-                            categories=CategoriesOptions()
-                        )).get_result()
+                response = service.analyze(
+                    return_analyzed_text="true",
+                    url=nlu_url,
+                    clean=clean_val,
+                    xpath=xpath_val,
+                    features=Features(
+                        metadata={},
+                        categories=CategoriesOptions()
+                    )).get_result()
                 print("***nlu success!")
 
             except ApiException as error:
