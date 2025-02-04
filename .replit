@@ -1,4 +1,4 @@
-run = "gunicorn --bind 0.0.0.0:5000 app:app"
+run = "gunicorn --bind 0.0.0.0:5000 app:app --log-level warning"
 #run = "python3 run.py"
 
 # The primary language of the repl. There can be others, though!
