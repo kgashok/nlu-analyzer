@@ -179,15 +179,26 @@ class MainResource(Resource):
                 return response
         else:
             try:
-                response = service.analyze(
-                    return_analyzed_text="true",
-                    url=nlu_url,
-                    clean=clean_val,
-                    xpath=xpath_val,
-                    features=Features(
-                        metadata={},
-                        categories=CategoriesOptions()
-                    )).get_result()
+                # If URL is not accessible, try analyzing as direct text
+                try:
+                    response = service.analyze(
+                        return_analyzed_text="true",
+                        url=nlu_url,
+                        clean=clean_val,
+                        xpath=xpath_val,
+                        features=Features(
+                            metadata={},
+                            categories=CategoriesOptions()
+                        )).get_result()
+                except ApiException:
+                    # Try analyzing as text if URL fails
+                    response = service.analyze(
+                        text=nlu_url,  # Treat input as text
+                        return_analyzed_text="true",
+                        features=Features(
+                            metadata={},
+                            categories=CategoriesOptions()
+                        )).get_result()
                 print("***nlu success!")
 
             except ApiException as error:
