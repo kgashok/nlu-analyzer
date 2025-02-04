@@ -8,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.api_exception import ApiException
-from ibm_watson.natural_language_understanding_v1 import Features, CategoriesOptions, KeywordsOptions, SummarizationOptions, MetadataOptions # Added MetadataOptions import
+from ibm_watson.natural_language_understanding_v1 import Features, CategoriesOptions, KeywordsOptions, SummarizationOptions
 import tweepy
 import os
 import re
