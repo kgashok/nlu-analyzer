@@ -106,7 +106,7 @@ class MainResource(Resource):
         xpath = None
         adj_url = url.strip()
 
-        if adj_url.find("x.com") or adj_url.find("twitter.com") > 0:
+        if adj_url.find("x.com") > 0 or adj_url.find("twitter.com") > 0:
             xpath = "//article"
             url_type = "twitter"
             xpath = get_tweet_text(adj_url)
