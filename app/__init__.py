@@ -51,14 +51,15 @@ def get_tweet_text(tweet_url, api=None):
         str: The text content of the tweet, or None if unable to fetch
     """
     tweet_user = None
-    tweet_id = tweet_url.split("/")[-1]
+    tweet_id = tweet_url.split("status/")[-1]
     print("tweet_id", tweet_id)
 
-    if tweet_id.find('?') == -1 and not tweet_id.isnumeric():
+    if tweet_id.find('?') == -1 and tweet_id.find('/') == -1 and not tweet_id.isnumeric():
         tweet_user = tweet_id
         print("tweet_user", tweet_user)
     else: 
         tweet_id = tweet_id.split('?')[0]
+        tweet_id = tweet_id.split('/')[0]
         print("tweet_id", tweet_id)
     
     if tweet_user:
