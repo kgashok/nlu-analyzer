@@ -6,7 +6,9 @@ Some kind of automated tests can be generated using the below links. As a sanity
 - Another tweet - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://x.com/JacquesThibs/status/1699204190197764408?s=20
 works, but the following doesn't
 
-https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://twitter.com/JacquesThibs/status/1699204190197764408?s=20
+https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://twitter.com/JacquesThibs/status/1699204190197764408?s=20  (fixed on Feb 5 2025)
+
+
 - Facebook link
 - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://www.facebook.com/watch/?v=1144248883758308&rdid=2cyfFFnnYgKM2WLo
 
