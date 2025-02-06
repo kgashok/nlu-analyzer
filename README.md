@@ -3,6 +3,14 @@
 
 Some kind of automated tests can be generated using the below links. As a sanity check. Change the URL below (```until /analyze?```) to whatever dev link shows in the Webview
 
+- https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=
+
+- https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=
+
+
+- Twitter user - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://x.com/pluralsight 
+- NEJM - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://www.nejm.org/doi/full/10.1056/NEJMp1609055?utm_content=bufferffe2b&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer&#t=article
+
 - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://twitter.com/hashtag/authorsummit2015?src=hash
 
 

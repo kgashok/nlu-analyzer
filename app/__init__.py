@@ -26,19 +26,6 @@ client = tweepy.Client(bearer_token=twitter_bearer_token)
 # Initialize Watson NLU
 service = NaturalLanguageUnderstandingV1(version='2018-03-16')
 
-def youtube_get_id(url):
-    """Extract YouTube video ID from URL."""
-    video_id = ''
-    patterns = [
-        r'(?:(?:v|vi|e)/|watch\?v=|youtu\.be/|/v/|/embed/|youtube.com/shorts/)([^/?&]+)',
-    ]
-
-    for pattern in patterns:
-        match = re.search(pattern, url)
-        if match:
-            video_id = match.group(1)
-            break
-    return video_id
 
 def get_tweet_text(tweet_url, api=None):
     """Extract text content from a tweet URL.
@@ -53,11 +40,11 @@ def get_tweet_text(tweet_url, api=None):
     tweet_user = None
     tweet_id = tweet_url.split("status/")[-1]
     print("tweet_id", tweet_id)
-
-    if tweet_id.find('?') == -1 and tweet_id.find('/') == -1 and not tweet_id.isnumeric():
-        tweet_user = tweet_id
+    if tweet_id == tweet_url: 
+        # it has to be an twitter user profile 
+        tweet_user = tweet_id.split("/")[-1]
         print("tweet_user", tweet_user)
-    else: 
+    else:
         tweet_id = tweet_id.split('?')[0]
         tweet_id = tweet_id.split('/')[0]
         print("tweet_id", tweet_id)
@@ -96,6 +83,8 @@ def get_tweet_text(tweet_url, api=None):
         if "453" in str(e):
             return "Unable to fetch tweet due to API access restrictions."
         return None
+
+
 
 class MainResource(Resource):
     """Handles URL parsing and analysis for natural language processing."""
@@ -211,6 +200,22 @@ class MainResource(Resource):
                     print("soup title used!")
 
         return response
+
+
+def youtube_get_id(url):
+    """Extract YouTube video ID from URL."""
+    video_id = ''
+    patterns = [
+        r'(?:(?:v|vi|e)/|watch\?v=|youtu\.be/|/v/|/embed/|youtube.com/shorts/)([^/?&]+)',
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            video_id = match.group(1)
+            break
+    return video_id
+
 
 api.add_resource(MainResource, '/analyze')
 
