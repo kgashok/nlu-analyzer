@@ -27,6 +27,32 @@ client = tweepy.Client(bearer_token=twitter_bearer_token)
 service = NaturalLanguageUnderstandingV1(version='2018-03-16')
 
 
+from langdetect import detect
+import re
+
+def filter_english_words(text):
+    """Keep only words that are likely English."""
+    if not text:
+        return text
+    # Split text into words
+    words = text.split()
+    # Keep words that don't trigger non-English detection
+    english_words = []
+    for word in words:
+        try:
+            # Skip URLs and mentions
+            if word.startswith(('http', '@', '#')):
+                english_words.append(word)
+                continue
+            # Check if word is English
+            if detect(word) == 'en':
+                english_words.append(word)
+        except:
+            # If detection fails, keep the word if it's alphanumeric
+            if re.match(r'^[a-zA-Z0-9\s.,!?\'\"]+$', word):
+                english_words.append(word)
+    return ' '.join(english_words)
+
 def get_tweet_text(tweet_url, api=None):
     """Extract text content from a tweet URL.
 
@@ -146,8 +172,11 @@ class MainResource(Resource):
         if url_type in ["twitter", "youtube"]:
             content_text = xpath_val
             try:
+                filtered_text = filter_english_words(content_text)
+                if not filtered_text:
+                    filtered_text = content_text  # Fallback to original if filtering fails
                 response = service.analyze(
-                    text=content_text,
+                    text=filtered_text,
                     return_analyzed_text="true",
                     clean=clean_val,
                     features=Features(
