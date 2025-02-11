@@ -65,16 +65,24 @@ def get_tweet_text(tweet_url, api=None):
     """
     tweet_user = None
     tweet_id = tweet_url.split("status/")[-1]
-    print("tweet_id", tweet_id)
-    if tweet_id == tweet_url: 
+    tweet_id2 = tweet_url.split("trending/")[-1]
+    
+    print("tweet_id", tweet_id, tweet_id2)
+    if tweet_id == tweet_url and tweet_id2 == tweet_url:
         # it has to be an twitter user profile 
         tweet_user = tweet_id.split("/")[-1]
         print("tweet_user", tweet_user)
-    else:
+    elif tweet_id != tweet_url:
         tweet_id = tweet_id.split('?')[0]
         tweet_id = tweet_id.split('/')[0]
-        print("tweet_id", tweet_id)
-    
+        print("tweet_id, 2nd pass", tweet_id)
+    else:
+        # This is a hack! Won't work!
+        # Needs to be handled differently! 
+        tweet_id = tweet_id2.split('?')[0]
+        tweet_id = tweet_id2.split('/')[0]
+        print("trending, 2nd pass", tweet_id)
+
     if tweet_user:
         try:
             user = client.get_user(username=tweet_user, user_fields=['description', 'name', 'username'])
@@ -104,6 +112,9 @@ def get_tweet_text(tweet_url, api=None):
         tweet_text = tweet.data.text
         print("Extracted Tweet Text:", tweet_text)
         return tweet_text
+    except AttributeError: 
+        # must be a trending ID 
+        return "ERROR! No Text to handle! Handling Tweet IDs and Twitter handles for now. Not handling Trending IDs in X.com yet. This will coming soon. Please be patient! "
     except tweepy.TweepyException as e:
         print("Error fetching tweet:", e)
         if "453" in str(e):
