@@ -7,5 +7,5 @@ if __name__ == '__main__':
     # This doesn't work, obviously 
     while True: 
         if keyboard.read_key() == "n": 
-            print("Generate new BST") 
+            # print("Generate new BST") 
             app.run()

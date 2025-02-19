@@ -51,6 +51,8 @@ def filter_english_words(text):
             # If detection fails, keep the word if it's alphanumeric
             if re.match(r'^[a-zA-Z0-9\s.,!?\'\"]+$', word):
                 english_words.append(word)
+
+    print("English words", english_words)
     return ' '.join(english_words)
 
 def get_tweet_text(tweet_url, api=None):
@@ -183,7 +185,7 @@ class MainResource(Resource):
         if url_type in ["twitter", "youtube"]:
             content_text = xpath_val
             try:
-                filtered_text = filter_english_words(content_text)
+                filtered_text = filter_english_words(content_text) * 2
                 if not filtered_text:
                     filtered_text = content_text  # Fallback to original if filtering fails
                 response = service.analyze(
@@ -204,6 +206,7 @@ class MainResource(Resource):
                 return response
 
             except ApiException as error:
+                
                 print("APIException1", error)
                 response = make_response(error.message, error.code)
                 return response
