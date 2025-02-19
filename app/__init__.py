@@ -34,25 +34,38 @@ def filter_english_words(text):
     """Keep only words that are likely English."""
     if not text:
         return text
-    # Split text into words
+        
+    common_words = {'a', 'an', 'the', 'and', 'but', 'or', 'in', 'on', 'at', 'to', 
+                   'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'over',
+                   'after', 'wonderful', 'performance', 'is', 'was', 'are'}
+    
     words = text.split()
-    # Keep words that don't trigger non-English detection
     english_words = []
+    
     for word in words:
+        # Skip URLs and mentions
+        if word.startswith(('http', '@', '#')):
+            english_words.append(word)
+            continue
+            
+        # Keep proper names (capitalized words)
+        if word[0].isupper():
+            english_words.append(word)
+            continue
+            
+        # Keep common English words
+        word_lower = word.lower().strip("'s")
+        if word_lower in common_words:
+            english_words.append(word)
+            continue
+            
         try:
-            # Skip URLs and mentions
-            if word.startswith(('http', '@', '#')):
-                english_words.append(word)
-                continue
-            # Check if word is English
             if detect(word) == 'en':
                 english_words.append(word)
         except:
-            # If detection fails, keep the word if it's alphanumeric
             if re.match(r'^[a-zA-Z0-9\s.,!?\'\"]+$', word):
                 english_words.append(word)
 
-    print("English words", english_words)
     return ' '.join(english_words)
 
 def get_tweet_text(tweet_url, api=None):
