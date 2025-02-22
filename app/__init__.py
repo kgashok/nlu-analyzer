@@ -198,6 +198,7 @@ class MainResource(Resource):
                     text=filtered_text,
                     return_analyzed_text="true",
                     clean=clean_val,
+                    language='ta',  # Specify Tamil language
                     features=Features(
                         categories=CategoriesOptions(),
                         keywords=KeywordsOptions(emotion=True, sentiment=True, limit=2)
