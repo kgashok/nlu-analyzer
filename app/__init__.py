@@ -191,11 +191,13 @@ class MainResource(Resource):
         if url_type in ["twitter", "youtube"]:
             content_text = xpath_val
             try:
+                filtered_text = filter_text(content_text)
+                if not filtered_text:
+                    filtered_text = content_text  # Fallback to original if filtering fails
                 response = service.analyze(
-                    text=content_text,
+                    text=filtered_text,
                     return_analyzed_text="true",
                     clean=clean_val,
-                    features=Features(
                     features=Features(
                         categories=CategoriesOptions(),
                         keywords=KeywordsOptions(emotion=True, sentiment=True, limit=2)
