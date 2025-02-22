@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify, make_response
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
@@ -34,21 +33,21 @@ def filter_text(text):
     """Keep words that are English or Tamil."""
     if not text:
         return text
-        
+
     words = text.split()
     filtered_words = []
-    
+
     for word in words:
         # Skip URLs and mentions
         if word.startswith(('http', '@', '#')):
             filtered_words.append(word)
             continue
-            
+
         # Keep proper names (capitalized words)
         if word[0].isupper():
             filtered_words.append(word)
             continue
-            
+
         try:
             lang = detect(word)
             if lang in ['en', 'ta']:  # Keep English and Tamil words
@@ -74,7 +73,7 @@ def get_tweet_text(tweet_url, api=None):
     tweet_user = None
     tweet_id = tweet_url.split("status/")[-1]
     tweet_id2 = tweet_url.split("trending/")[-1]
-    
+
     print("tweet_id", tweet_id, tweet_id2)
     if tweet_id == tweet_url and tweet_id2 == tweet_url:
         # it has to be an twitter user profile 
@@ -110,7 +109,7 @@ def get_tweet_text(tweet_url, api=None):
         except Exception as e:
             print("Error fetching user:", e)
             return f"Error fetching user information: {str(e)}"
-            
+
     try:
         tweet = client.get_tweet(
             id=tweet_id,
@@ -212,9 +211,16 @@ class MainResource(Resource):
                 return response
 
             except ApiException as error:
-                
+
                 print("APIException1", error)
-                response = make_response(error.message, error.code)
+                error_response = {
+                    'error': error.message,
+                    'metadata': {
+                        'title': content_text
+                    }
+                }
+                response = make_response(json.dumps(error_response), error.code)
+                response.headers['Content-Type'] = 'application/json'
                 return response
         else:
             try:
