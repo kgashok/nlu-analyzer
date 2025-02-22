@@ -193,14 +193,26 @@ class MainResource(Resource):
                 filtered_text = filter_text(content_text)
                 if not filtered_text:
                     filtered_text = content_text  # Fallback to original if filtering fails
-                response = service.analyze(
-                    text=filtered_text,
-                    return_analyzed_text="true",
-                    clean=clean_val,
-                    features=Features(
-                        categories=CategoriesOptions(),
-                        keywords=KeywordsOptions(emotion=True, sentiment=True, limit=2)
-                    )).get_result()
+                try:
+                    response = service.analyze(
+                        text=filtered_text,
+                        return_analyzed_text="true",
+                        clean=clean_val,
+                        features=Features(
+                            categories=CategoriesOptions(),
+                            keywords=KeywordsOptions(emotion=True, sentiment=True, limit=2)
+                        ))
+                    response = response.get_result()
+                except ApiException as e:
+                    if "unsupported text language" in str(e).lower():
+                        error_response = {
+                            'error': str(e),
+                            'metadata': {
+                                'title': content_text
+                            }
+                        }
+                        return make_response(json.dumps(error_response), 200)
+                    raise e
 
                 print("***nlu tweet success!")
                 response['retrieved_url'] = nlu_url
