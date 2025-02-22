@@ -30,43 +30,36 @@ service = NaturalLanguageUnderstandingV1(version='2018-03-16')
 from langdetect import detect
 import re
 
-def filter_english_words(text):
-    """Keep only words that are likely English."""
+def filter_text(text):
+    """Keep words that are English or Tamil."""
     if not text:
         return text
         
-    common_words = {'a', 'an', 'the', 'and', 'but', 'or', 'in', 'on', 'at', 'to', 
-                   'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'over',
-                   'after', 'wonderful', 'performance', 'is', 'was', 'are'}
-    
     words = text.split()
-    english_words = []
+    filtered_words = []
     
     for word in words:
         # Skip URLs and mentions
         if word.startswith(('http', '@', '#')):
-            english_words.append(word)
+            filtered_words.append(word)
             continue
             
         # Keep proper names (capitalized words)
         if word[0].isupper():
-            english_words.append(word)
-            continue
-            
-        # Keep common English words
-        word_lower = word.lower().strip("'s")
-        if word_lower in common_words:
-            english_words.append(word)
+            filtered_words.append(word)
             continue
             
         try:
-            if detect(word) == 'en':
-                english_words.append(word)
+            lang = detect(word)
+            if lang in ['en', 'ta']:  # Keep English and Tamil words
+                filtered_words.append(word)
         except:
-            if re.match(r'^[a-zA-Z0-9\s.,!?\'\"]+$', word):
-                english_words.append(word)
+            # If detection fails, keep the word if it contains Tamil unicode range
+            if re.match(r'^[a-zA-Z0-9\s.,!?\'\"]+$', word) or \
+               any('\u0B80' <= char <= '\u0BFF' for char in word):  # Tamil unicode range
+                filtered_words.append(word)
 
-    return ' '.join(english_words)
+    return ' '.join(filtered_words)
 
 def get_tweet_text(tweet_url, api=None):
     """Extract text content from a tweet URL.
@@ -198,7 +191,7 @@ class MainResource(Resource):
         if url_type in ["twitter", "youtube"]:
             content_text = xpath_val
             try:
-                filtered_text = filter_english_words(content_text)
+                filtered_text = filter_text(content_text)
                 if not filtered_text:
                     filtered_text = content_text  # Fallback to original if filtering fails
                 response = service.analyze(
