@@ -243,7 +243,7 @@ class MainResource(Resource):
                 return response
 
         print(response)
-        print(response.headers)
+        #print(response.headers)
         if response:
             ret_url = response['retrieved_url']
             print(ret_url)
