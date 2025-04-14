@@ -116,11 +116,13 @@ def get_tweet_text(tweet_url, api=None):
             expansions=['author_id', 'attachments.media_keys'],
             tweet_fields=['created_at', 'text', 'public_metrics']
         )
+        print(tweet)
         tweet_text = tweet.data.text
         print("Extracted Tweet Text:", tweet_text)
         return tweet_text
-    except AttributeError: 
+    except AttributeError as e: 
         # must be a trending ID 
+        print("Error fetching tweet:", e)
         return "ERROR! No Text to handle! Handling Tweet IDs and Twitter handles for now. Not handling Trending IDs in X.com yet. This will coming soon. Please be patient! "
     except tweepy.TweepyException as e:
         print("Error fetching tweet:", e)
@@ -240,6 +242,8 @@ class MainResource(Resource):
                 response = make_response(error.message, error.code)
                 return response
 
+        print(response)
+        print(response.headers)
         if response:
             ret_url = response['retrieved_url']
             print(ret_url)
@@ -250,9 +254,10 @@ class MainResource(Resource):
             if soup and soup.select_one('title'):
                 title2 = soup.select_one('title').text
                 print("title from soup", title2)
-                if len(title2) > len(title):
+                if len(title2) > len(title) or title.find("Before you continue to YouTube") >= 0:
                     response['metadata']["title"] = title2
                     print("soup title used!")
+            
 
         return response
 
