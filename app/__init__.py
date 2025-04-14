@@ -242,7 +242,7 @@ class MainResource(Resource):
                 response = make_response(error.message, error.code)
                 return response
 
-        print(response)
+        #print(response)
         #print(response.headers)
         if response:
             ret_url = response['retrieved_url']
