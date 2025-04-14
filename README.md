@@ -3,6 +3,12 @@
 
 Some kind of automated tests can be generated using the below links. As a sanity check. Change the URL below (```until /analyze?```) to whatever dev link shows in the Webview
 
+- A YouTube short URL - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://bit.ly/4jcwC69
+
+- A non-trending tweet but not authorized - 
+https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://twitter.com/jasongorman/status/1077118717572640768 
+
+
 - YouTube link -  https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://www.youtube.com/watch?v=nKH0Zu7JNUk
 
 - youtube shorts links - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://youtube.com/shorts/MaoknlXbors?feature=shared
