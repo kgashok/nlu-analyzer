@@ -146,6 +146,9 @@ class MainResource(Resource):
             xpath = "//article"
             url_type = "twitter"
             xpath = get_tweet_text(adj_url)
+            if xpath:
+                # Keep only alphanumeric chars, spaces and basic punctuation
+                xpath = ''.join(char for char in xpath if char.isalnum() or char in ' .,!?\'\"')
 
         elif adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
             from googleapiclient.discovery import build
