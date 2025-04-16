@@ -152,6 +152,7 @@ class MainResource(Resource):
             from googleapiclient.errors import HttpError
 
             video_id = youtube_get_id(adj_url)
+            print("Video ID", video_id)
             if len(video_id) == 0:
                 print("Bad Video ID")
                 raise ApiException(code=400, message="Invalid YouTube video ID!")
@@ -172,6 +173,9 @@ class MainResource(Resource):
                 description = video_data.get('description', '')
 
                 xpath = f"{title}\n\n{description}"
+                if len(xpath) < 20:
+                    xpath = xpath + " " + xpath
+                    
                 url_type = "youtube"
                 clean = "true"
                 adj_url = f"https://www.youtube.com/watch?v={video_id}"
@@ -179,6 +183,7 @@ class MainResource(Resource):
                 print(f"YouTube API error: {e}")
                 raise ApiException(code=500, message="YouTube API error")
 
+        print("get_url_related:", url_type, clean, xpath, adj_url)
         return url_type, clean, xpath, adj_url
 
     def get(self):
@@ -213,8 +218,8 @@ class MainResource(Resource):
                 return response
 
             except ApiException as error:
-
                 print("APIException1", error)
+                #if error.code != 422: 
                 error_response = {
                     'error': error.message,
                     'metadata': {
@@ -242,8 +247,6 @@ class MainResource(Resource):
                 response = make_response(error.message, error.code)
                 return response
 
-        #print(response)
-        #print(response.headers)
         if response:
             ret_url = response['retrieved_url']
             print(ret_url)
