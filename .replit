@@ -12,6 +12,7 @@ modules = ["python-3.8"]
 # Specifies which nix channel to use when building the environment.
 [nix]
 channel = "stable-21_11"
+packages = ["xcodebuild", "zlib"]
 
 [env]
 

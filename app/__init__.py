@@ -146,10 +146,7 @@ class MainResource(Resource):
             xpath = "//article"
             url_type = "twitter"
             xpath = get_tweet_text(adj_url)
-            if xpath:
-                # Keep only alphanumeric chars, spaces and basic punctuation
-                xpath = ''.join(char for char in xpath if char.isalnum() or char in ' .,!?\'\"')
-
+            
         elif adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
             from googleapiclient.discovery import build
             from googleapiclient.errors import HttpError
@@ -176,9 +173,7 @@ class MainResource(Resource):
                 description = video_data.get('description', '')
 
                 xpath = f"{title}\n\n{description}"
-                if len(xpath) < 20:
-                    xpath = xpath + " " + xpath
-                    
+                
                 url_type = "youtube"
                 clean = "true"
                 adj_url = f"https://www.youtube.com/watch?v={video_id}"
@@ -199,10 +194,25 @@ class MainResource(Resource):
 
         if url_type in ["twitter", "youtube"]:
             content_text = xpath_val
+            if len(content_text) < 20: 
+                response = dict()
+                response['retrieved_url'] = nlu_url 
+                response['metadata'] = dict()
+                response['metadata']['title'] = content_text
+                response['analyzed_text'] = ""
+                response['categories'] = []
+                response['language'] = ""
+                response['usage'] = dict() 
+                response['usage']['text_units'] = 0
+                response['usage']['text_characters'] = 0
+                response['usage']['features'] = 0
+                return response 
             try:
                 filtered_text = filter_text(content_text)
+                print("filtered:", filtered_text)
                 if not filtered_text:
                     filtered_text = content_text  # Fallback to original if filtering fails
+
                 response = service.analyze(
                     text=filtered_text,
                     return_analyzed_text="true",
@@ -232,8 +242,10 @@ class MainResource(Resource):
                 response = make_response(json.dumps(error_response), error.code)
                 response.headers['Content-Type'] = 'application/json'
                 return response
+        
         else:
             try:
+                print("before analyze:", nlu_url, clean_val, xpath_val )
                 response = service.analyze(
                     return_analyzed_text="true",
                     url=nlu_url,
