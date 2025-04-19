@@ -298,7 +298,8 @@ class MainResource(Resource):
                     response['metadata']["title"] = title2
                     print("soup title used!")
             if not title or len(title) == 0: 
-                response['metadata']['title'] = "<B L A N K>"
+                response['metadata']['title'] = "<B L A N K2>"
+                response['categories'].append({'label': "title_as_url", 'score': 100})
 
         return response
 
