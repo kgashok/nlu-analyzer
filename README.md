@@ -3,6 +3,13 @@
 
 Some kind of automated tests can be generated using the below links. As a sanity check. Change the URL below (```until /analyze?```) to whatever dev link shows in the Webview
 
+- A PDF link - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://bit.ly/42jKX9t
+
+- https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://www.cdc.gov/steadi/media/pdfs/STEADI-Assessment-30Sec-508.pdf
+
+
+- Another YouTube URL -  https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://bit.ly/3C3EwxP
+
 - Another Shorts URL - https://728a8dfc-f9d3-4939-acf4-a696fa6b3df3-00-2ogpuovva6p53.pike.replit.dev/analyze?url=https://bit.ly/43MCJt1
 
 

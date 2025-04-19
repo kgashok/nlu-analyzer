@@ -193,20 +193,7 @@ class MainResource(Resource):
         response = None
 
         if url_type in ["twitter", "youtube"]:
-            content_text = xpath_val
-            if len(content_text) < 20: 
-                response = dict()
-                response['retrieved_url'] = nlu_url 
-                response['metadata'] = dict()
-                response['metadata']['title'] = content_text
-                response['analyzed_text'] = ""
-                response['categories'] = []
-                response['language'] = ""
-                response['usage'] = dict() 
-                response['usage']['text_units'] = 0
-                response['usage']['text_characters'] = 0
-                response['usage']['features'] = 0
-                return response 
+            content_text = xpath_val 
             try:
                 filtered_text = filter_text(content_text)
                 print("filtered:", filtered_text)
@@ -232,16 +219,28 @@ class MainResource(Resource):
 
             except ApiException as error:
                 print("APIException1", error)
-                #if error.code != 422: 
-                error_response = {
-                    'error': error.message,
-                    'metadata': {
-                        'title': content_text
+                if error.code not in [422, 400]: 
+                    error_response = {
+                        'error': error.message,
+                        'metadata': {
+                            'title': content_text
+                        }
                     }
-                }
-                response = make_response(json.dumps(error_response), error.code)
-                response.headers['Content-Type'] = 'application/json'
-                return response
+                    response = make_response(json.dumps(error_response), error.code)
+                    response.headers['Content-Type'] = 'application/json'
+                    return response
+                else: 
+                    response = dict()
+                    response['retrieved_url'] = nlu_url 
+                    response['metadata'] = dict()
+                    response['metadata']['title'] = content_text
+                    response['analyzed_text'] = ""
+                    response['categories'] = []
+                    response['language'] = ""
+                    response['usage'] = dict() 
+                    response['usage']['text_units'] = 0
+                    response['usage']['text_characters'] = 0
+                    response['usage']['features'] = 0
         
         else:
             try:
@@ -259,8 +258,31 @@ class MainResource(Resource):
 
             except ApiException as error:
                 print("APIException2", error)
-                response = make_response(error.message, error.code)
-                return response
+                if error.code not in [422, 400]: 
+                    error_response = {
+                        'error': error.message,
+                        'metadata': {
+                            'title': content_text
+                        }
+                    }
+                    response = make_response(json.dumps(error_response), error.code)
+                    response.headers['Content-Type'] = 'application/json'
+                    return response
+                    #response = make_response(error.message, error.code)
+                    #return response
+
+                else: 
+                    response = dict()
+                    response['retrieved_url'] = nlu_url 
+                    response['metadata'] = dict()
+                    response['metadata']['title'] = xpath_val
+                    response['analyzed_text'] = ""
+                    response['categories'] = []
+                    response['language'] = ""
+                    response['usage'] = dict() 
+                    response['usage']['text_units'] = 0
+                    response['usage']['text_characters'] = 0
+                    response['usage']['features'] = 0
 
         if response:
             ret_url = response['retrieved_url']
@@ -275,7 +297,8 @@ class MainResource(Resource):
                 if len(title2) > len(title) or title.find("Before you continue to YouTube") >= 0:
                     response['metadata']["title"] = title2
                     print("soup title used!")
-            
+            if not title or len(title) == 0: 
+                response['metadata']['title'] = "<B L A N K>"
 
         return response
 
