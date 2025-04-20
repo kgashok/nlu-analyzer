@@ -306,29 +306,32 @@ class MainResource(Resource):
 
 def youtube_get_id(url):
     """Extract YouTube video ID from URL."""
-    video_id = ''
-    # First try to get v parameter
     try:
         from urllib.parse import urlparse, parse_qs
+        # Handle standard YouTube URLs
         parsed_url = urlparse(url)
         if parsed_url.query:
             qs = parse_qs(parsed_url.query)
             if 'v' in qs:
                 return qs['v'][0]
-    except:
+
+        # Handle youtu.be and other formats
+        if 'youtu.be' in parsed_url.netloc:
+            return parsed_url.path.strip('/')
+
+        # Handle shorts and other formats
+        path = parsed_url.path
+        if '/shorts/' in path:
+            return path.split('/shorts/')[1].split('/')[0]
+        elif '/embed/' in path:
+            return path.split('/embed/')[1].split('/')[0]
+        elif '/v/' in path:
+            return path.split('/v/')[1].split('/')[0]
+    except Exception as e:
+        print(f"Error extracting video ID: {e}")
         pass
 
-    # Fallback to regex patterns for other formats
-    patterns = [
-        r'(?:(?:v|vi|e)/|watch\?v=|youtu\.be/|/v/|/embed/|youtube.com/shorts/)([^/?&]+)',
-    ]
-
-    for pattern in patterns:
-        match = re.search(pattern, url)
-        if match:
-            video_id = match.group(1)
-            break
-    return video_id
+    return ''
 
 
 api.add_resource(MainResource, '/analyze')
