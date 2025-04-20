@@ -307,6 +307,18 @@ class MainResource(Resource):
 def youtube_get_id(url):
     """Extract YouTube video ID from URL."""
     video_id = ''
+    # First try to get v parameter
+    try:
+        from urllib.parse import urlparse, parse_qs
+        parsed_url = urlparse(url)
+        if parsed_url.query:
+            qs = parse_qs(parsed_url.query)
+            if 'v' in qs:
+                return qs['v'][0]
+    except:
+        pass
+
+    # Fallback to regex patterns for other formats
     patterns = [
         r'(?:(?:v|vi|e)/|watch\?v=|youtu\.be/|/v/|/embed/|youtube.com/shorts/)([^/?&]+)',
     ]
