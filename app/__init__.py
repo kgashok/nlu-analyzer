@@ -294,7 +294,7 @@ class MainResource(Resource):
             if soup and soup.select_one('title'):
                 title2 = soup.select_one('title').text
                 print("title from soup", title2)
-                if len(title2) > len(title) or title.find("Before you continue to YouTube") >= 0:
+                if not title or len(title2) > len(title) or title.find("Before you continue to YouTube") >= 0:
                     response['metadata']["title"] = title2
                     print("soup title used!")
             if not title or len(title) == 0: 
