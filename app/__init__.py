@@ -142,12 +142,15 @@ class MainResource(Resource):
         xpath = None
         adj_url = url.strip()
 
+        print("Full URL received:", adj_url)  # Debug line
+
         if adj_url.find("x.com") > 0 or adj_url.find("twitter.com") > 0:
             xpath = "//article"
             url_type = "twitter"
             xpath = get_tweet_text(adj_url)
-            
+
         elif adj_url.find("youtube.com") > 0 or url.find("youtu.be") > 0:
+            print("YouTube URL detected:", adj_url)  # Debug line
             from googleapiclient.discovery import build
             from googleapiclient.errors import HttpError
 
@@ -173,7 +176,7 @@ class MainResource(Resource):
                 description = video_data.get('description', '')
 
                 xpath = f"{title}\n\n{description}"
-                
+
                 url_type = "youtube"
                 clean = "true"
                 adj_url = f"https://www.youtube.com/watch?v={video_id}"
@@ -241,7 +244,7 @@ class MainResource(Resource):
                     response['usage']['text_units'] = 0
                     response['usage']['text_characters'] = 0
                     response['usage']['features'] = 0
-        
+
         else:
             try:
                 print("before analyze:", nlu_url, clean_val, xpath_val )
