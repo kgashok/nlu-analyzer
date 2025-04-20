@@ -186,9 +186,8 @@ class MainResource(Resource):
 
     def get(self):
         """Handle GET requests for URL analysis."""
-        nlu_url = request.args.get('url', type=str)
-        # Preserve the full URL exactly as received
-        print("Full URL being processed:", nlu_url)
+        nlu_url = request.args.get('url')
+        print("nlu_url", nlu_url)
         url_type, clean_val, xpath_val, nlu_url = self.get_url_related(nlu_url)
         print("adj_url", nlu_url, clean_val, xpath_val)
         response = None
@@ -295,7 +294,7 @@ class MainResource(Resource):
             if soup and soup.select_one('title'):
                 title2 = soup.select_one('title').text
                 print("title from soup", title2)
-                if not title or len(title2) > len(title) or title.find("Before you continue to YouTube") >= 0:
+                if len(title2) > len(title) or title.find("Before you continue to YouTube") >= 0:
                     response['metadata']["title"] = title2
                     print("soup title used!")
             if not title or len(title) == 0: 
@@ -307,37 +306,17 @@ class MainResource(Resource):
 
 def youtube_get_id(url):
     """Extract YouTube video ID from URL."""
-    try:
-        from urllib.parse import urlparse, parse_qs
-        
-        # Handle standard YouTube URLs
-        parsed_url = urlparse(url)
-        query_params = parse_qs(parsed_url.query)
-        
-        # Check for 'v' parameter in query string
-        if 'v' in query_params:
-            return query_params['v'][0]
-            
-        # Handle youtu.be URLs
-        if 'youtu.be' in parsed_url.netloc:
-            path = parsed_url.path.strip('/')
-            return path.split('?')[0]
-            
-        # Handle other formats (shorts, embed, etc)
-        path = parsed_url.path
-        if '/shorts/' in path:
-            return path.split('/shorts/')[1].split('/')[0].split('?')[0]
-        elif '/embed/' in path:
-            return path.split('/embed/')[1].split('/')[0].split('?')[0]
-        elif '/v/' in path:
-            return path.split('/v/')[1].split('/')[0].split('?')[0]
-            
-        print("Video ID extraction failed for URL:", url)
-    except Exception as e:
-        print(f"Error extracting video ID: {e}")
-        print("Failed URL:", url)
-    
-    return ''
+    video_id = ''
+    patterns = [
+        r'(?:(?:v|vi|e)/|watch\?v=|youtu\.be/|/v/|/embed/|youtube.com/shorts/)([^/?&]+)',
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            video_id = match.group(1)
+            break
+    return video_id
 
 
 api.add_resource(MainResource, '/analyze')
