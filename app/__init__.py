@@ -187,13 +187,7 @@ class MainResource(Resource):
     def get(self):
         """Handle GET requests for URL analysis."""
         nlu_url = request.args.get('url', type=str)
-        # Get all query parameters and reconstruct the full URL if needed
-        all_args = request.args.to_dict()
-        if '?' in nlu_url:
-            # If URL already has parameters, ensure we preserve them
-            base_url, params = nlu_url.split('?', 1)
-            params_dict = dict(param.split('=') for param in params.split('&'))
-            all_args.update(params_dict)
+        # Preserve the full URL exactly as received
         print("Full URL being processed:", nlu_url)
         url_type, clean_val, xpath_val, nlu_url = self.get_url_related(nlu_url)
         print("adj_url", nlu_url, clean_val, xpath_val)
@@ -315,29 +309,34 @@ def youtube_get_id(url):
     """Extract YouTube video ID from URL."""
     try:
         from urllib.parse import urlparse, parse_qs
+        
         # Handle standard YouTube URLs
         parsed_url = urlparse(url)
-        if parsed_url.query:
-            qs = parse_qs(parsed_url.query)
-            if 'v' in qs:
-                return qs['v'][0]
-
-        # Handle youtu.be and other formats
+        query_params = parse_qs(parsed_url.query)
+        
+        # Check for 'v' parameter in query string
+        if 'v' in query_params:
+            return query_params['v'][0]
+            
+        # Handle youtu.be URLs
         if 'youtu.be' in parsed_url.netloc:
-            return parsed_url.path.strip('/')
-
-        # Handle shorts and other formats
+            path = parsed_url.path.strip('/')
+            return path.split('?')[0]
+            
+        # Handle other formats (shorts, embed, etc)
         path = parsed_url.path
         if '/shorts/' in path:
-            return path.split('/shorts/')[1].split('/')[0]
+            return path.split('/shorts/')[1].split('/')[0].split('?')[0]
         elif '/embed/' in path:
-            return path.split('/embed/')[1].split('/')[0]
+            return path.split('/embed/')[1].split('/')[0].split('?')[0]
         elif '/v/' in path:
-            return path.split('/v/')[1].split('/')[0]
+            return path.split('/v/')[1].split('/')[0].split('?')[0]
+            
+        print("Video ID extraction failed for URL:", url)
     except Exception as e:
         print(f"Error extracting video ID: {e}")
-        pass
-
+        print("Failed URL:", url)
+    
     return ''
 
 
