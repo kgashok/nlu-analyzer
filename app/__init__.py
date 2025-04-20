@@ -186,8 +186,15 @@ class MainResource(Resource):
 
     def get(self):
         """Handle GET requests for URL analysis."""
-        nlu_url = request.args.get('url')
-        print("nlu_url", nlu_url)
+        nlu_url = request.args.get('url', type=str)
+        # Get all query parameters and reconstruct the full URL if needed
+        all_args = request.args.to_dict()
+        if '?' in nlu_url:
+            # If URL already has parameters, ensure we preserve them
+            base_url, params = nlu_url.split('?', 1)
+            params_dict = dict(param.split('=') for param in params.split('&'))
+            all_args.update(params_dict)
+        print("Full URL being processed:", nlu_url)
         url_type, clean_val, xpath_val, nlu_url = self.get_url_related(nlu_url)
         print("adj_url", nlu_url, clean_val, xpath_val)
         response = None
