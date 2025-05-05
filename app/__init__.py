@@ -160,17 +160,31 @@ class MainResource(Resource):
             youtube = build('youtube', 'v3', developerKey=os.getenv('YOUTUBE_API_KEY'))
 
             try:
-                video_response = youtube.videos().list(
-                    part='snippet',
-                    id=video_id
-                ).execute()
+                # Check if it's a playlist
+                if 'list=' in adj_url:
+                    playlist_response = youtube.playlists().list(
+                        part='snippet',
+                        id=video_id
+                    ).execute()
 
-                if not video_response['items']:
-                    raise ApiException(code=404, message="Video not found!")
+                    if not playlist_response['items']:
+                        raise ApiException(code=404, message="Playlist not found!")
 
-                video_data = video_response['items'][0]['snippet']
-                title = video_data.get('title', '')
-                description = video_data.get('description', '')
+                    playlist_data = playlist_response['items'][0]['snippet']
+                    title = playlist_data.get('title', '')
+                    description = playlist_data.get('description', '')
+                else:
+                    video_response = youtube.videos().list(
+                        part='snippet',
+                        id=video_id
+                    ).execute()
+
+                    if not video_response['items']:
+                        raise ApiException(code=404, message="Video not found!")
+
+                    video_data = video_response['items'][0]['snippet']
+                    title = video_data.get('title', '')
+                    description = video_data.get('description', '')
 
                 xpath = f"{title}\n\n{description}"
                 
