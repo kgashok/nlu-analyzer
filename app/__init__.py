@@ -307,6 +307,13 @@ class MainResource(Resource):
 def youtube_get_id(url):
     """Extract YouTube video ID from URL."""
     video_id = ''
+    
+    # First check if it's a playlist URL
+    playlist_match = re.search(r'[?&]list=([^&]+)', url)
+    if playlist_match:
+        return playlist_match.group(1)
+    
+    # If not a playlist, check for video ID
     patterns = [
         r'(?:(?:v|vi|e)/|watch\?v=|youtu\.be/|/v/|/embed/|youtube.com/shorts/)([^/?&]+)',
     ]
